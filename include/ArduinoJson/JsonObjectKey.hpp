@@ -12,16 +12,72 @@
 namespace ArduinoJson {
 
 // Represents a key in a JsonObject
-class JsonObjectKey {
- public:
-  JsonObjectKey(const char* key) : _value(key), _needs_copy(false) {}
-  JsonObjectKey(const String& key) : _value(key.c_str()), _needs_copy(true) {}
+/*template <typename TString>
+class JsonObjectKey;
 
-  const char* c_str() const { return _value; }
-  bool needs_copy() const { return _needs_copy; }
+template <>
+class JsonObjectKey<const char*> {
+ public:
+  JsonObjectKey(const char* key) : _value(key) {}
+
+  const char* c_str() const {
+    return _value;
+  }
+  bool needs_copy() const {
+    return false;
+  }
 
  private:
   const char* _value;
-  bool _needs_copy;
 };
+
+template <>
+class JsonObjectKey<String> {
+ public:
+  JsonObjectKey(const String& key) : _value(key) {}
+
+  const char* c_str() const {
+    return _value.c_str();
+  }
+  bool needs_copy() const {
+    return true;
+  }
+
+ private:
+  const String& _value;
+};
+
+template <typename TString>
+JsonObjectKey<TString> makeKey(const TString& value) {
+  return JsonObjectKey<TString>(value);
+}*/
+
+namespace JsonObjectKey {
+
+template <typename TString>
+struct ShouldDuplicate;
+
+template <>
+struct ShouldDuplicate<const char*> {
+  static const bool value = false;
+};
+
+template <int N>
+struct ShouldDuplicate<char[N]> {
+  static const bool value = false;
+};
+
+template <>
+struct ShouldDuplicate<String> {
+  static const bool value = true;
+};
+
+inline bool equals(const char* key1, const char* key2) {
+  return !strcmp(key1, key2);
+}
+
+inline bool equals(const char* key1, const String& key2) {
+  return !strcmp(key1, key2.c_str());
+}
+}
 }

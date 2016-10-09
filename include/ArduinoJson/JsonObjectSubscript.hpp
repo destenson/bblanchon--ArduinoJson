@@ -55,7 +55,7 @@ class JsonObjectSubscript : public JsonVariantBase<JsonObjectSubscript<TKey> > {
 
   template <typename TValue>
   FORCE_INLINE typename Internals::JsonVariantAs<TValue>::type as() const {
-    return _object.get<TValue>(_key);
+    return _object.get<TValue, TKey>(_key);
   }
 
   template <typename TValue>

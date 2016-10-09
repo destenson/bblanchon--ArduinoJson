@@ -71,7 +71,8 @@ inline JsonArray &JsonArray::createNestedArray() {
   return array;
 }
 
-inline JsonArray &JsonObject::createNestedArray(JsonObjectKey key) {
+template <typename TString>
+inline JsonArray &JsonObject::createNestedArray(const TString &key) {
   if (!_buffer) return JsonArray::invalid();
   JsonArray &array = _buffer->createArray();
   setNodeAt<const JsonVariant &>(key, array);
