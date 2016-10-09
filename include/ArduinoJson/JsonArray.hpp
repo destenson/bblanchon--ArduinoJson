@@ -172,7 +172,7 @@ class JsonArray : public Internals::JsonPrintable<JsonArray>,
 
   // Imports a 1D array
   template <typename T, size_t N>
-  bool copyFrom(T(&array)[N]) {
+  bool copyFrom(T (&array)[N]) {
     return copyFrom(array, N);
   }
 
@@ -188,7 +188,7 @@ class JsonArray : public Internals::JsonPrintable<JsonArray>,
 
   // Imports a 2D array
   template <typename T, size_t N1, size_t N2>
-  bool copyFrom(T(&array)[N1][N2]) {
+  bool copyFrom(T (&array)[N1][N2]) {
     bool ok = true;
     for (size_t i = 0; i < N1; i++) {
       JsonArray &nestedArray = createNestedArray();
@@ -201,7 +201,7 @@ class JsonArray : public Internals::JsonPrintable<JsonArray>,
 
   // Exports a 1D array
   template <typename T, size_t N>
-  size_t copyTo(T(&array)[N]) const {
+  size_t copyTo(T (&array)[N]) const {
     return copyTo(array, N);
   }
 
@@ -216,7 +216,7 @@ class JsonArray : public Internals::JsonPrintable<JsonArray>,
 
   // Exports a 2D array
   template <typename T, size_t N1, size_t N2>
-  void copyTo(T(&array)[N1][N2]) const {
+  void copyTo(T (&array)[N1][N2]) const {
     size_t i = 0;
     for (const_iterator it = begin(); it != end() && i < N1; ++it) {
       it->asArray().copyTo(array[i++]);

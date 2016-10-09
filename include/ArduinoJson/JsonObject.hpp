@@ -172,21 +172,16 @@ class JsonObject : public Internals::JsonPrintable<JsonObject>,
     return setNodeValue<TValue>(node, value);
   }
 
-  template <typename TString>
-  typename TypeTraits::EnableIf<!JsonObjectKey::ShouldDuplicate<TString>::value,
-                                bool>::type
-  setNodeKey(node_type* node, const TString& key) {
+  bool setNodeKey(node_type* node, const char* key) {
     node->content.key = key;
     return true;
   }
 
   template <typename TString>
-  typename TypeTraits::EnableIf<JsonObjectKey::ShouldDuplicate<TString>::value,
-                                bool>::type
-  setNodeKey(node_type* node, const TString& key) {
+  bool setNodeKey(node_type* node, const TString& key) {
+    // we duplicate all strings that are not char*
     node->content.key = _buffer->strdup(key);
-    if (node->content.key == NULL) return false;
-    return true;
+    return node->content.key != NULL;
   }
 
   template <typename TValue>

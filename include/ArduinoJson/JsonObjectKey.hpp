@@ -54,24 +54,6 @@ JsonObjectKey<TString> makeKey(const TString& value) {
 
 namespace JsonObjectKey {
 
-template <typename TString>
-struct ShouldDuplicate;
-
-template <>
-struct ShouldDuplicate<const char*> {
-  static const bool value = false;
-};
-
-template <int N>
-struct ShouldDuplicate<char[N]> {
-  static const bool value = false;
-};
-
-template <>
-struct ShouldDuplicate<String> {
-  static const bool value = true;
-};
-
 inline bool equals(const char* key1, const char* key2) {
   return !strcmp(key1, key2);
 }
