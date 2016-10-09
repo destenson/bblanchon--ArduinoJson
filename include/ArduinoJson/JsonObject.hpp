@@ -12,7 +12,6 @@
 #include "Internals/List.hpp"
 #include "Internals/ReferenceType.hpp"
 #include "JsonPair.hpp"
-#include "String.hpp"
 #include "TypeTraits/EnableIf.hpp"
 #include "TypeTraits/IsFloatingPoint.hpp"
 #include "TypeTraits/IsReference.hpp"
@@ -157,7 +156,7 @@ class JsonObject : public Internals::JsonPrintable<JsonObject>,
   template <typename TString>
   node_type* getNodeAt(const TString& key) const {
     for (node_type* node = _firstNode; node; node = node->next) {
-      if (JsonObjectKey::equals(node->content.key, key)) return node;
+      if (areKeysEqual(node->content.key, key)) return node;
     }
     return NULL;
   }
@@ -188,6 +187,15 @@ class JsonObject : public Internals::JsonPrintable<JsonObject>,
   bool setNodeValue(node_type* node, TValue value) {
     node->content.value = value;
     return true;
+  }
+
+  static bool areKeysEqual(const char* key1, const char* key2) {
+    return !strcmp(key1, key2);
+  }
+
+  template <typename TString>
+  static bool areKeysEqual(const char* key1, const TString& key2) {
+    return !strcmp(key1, key2.c_str());
   }
 };
 }
