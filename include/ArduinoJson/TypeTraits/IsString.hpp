@@ -19,9 +19,20 @@ struct IsString {
   static const bool value = false;
 };
 
+template <typename T>
+struct IsString<const T> : IsString<T> {};
+
 template <>
 struct IsString<String> {
   static const bool value = true;
 };
+
+template <typename T>
+struct IsStringReference {
+  static const bool value = false;
+};
+
+template <typename T>
+struct IsStringReference<T&> : IsString<T> {};
 }
 }

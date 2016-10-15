@@ -42,11 +42,9 @@ class JsonArray : public Internals::JsonPrintable<JsonArray>,
  public:
   // A meta-function that returns true if type T can be used in
   // JsonArray::set()
-  template <typename T>
+  template <typename T, typename Enable = void>
   struct CanSet {
-    static const bool value = JsonVariant::IsConstructibleFrom<T>::value ||
-                              TypeTraits::IsSame<T, String &>::value ||
-                              TypeTraits::IsSame<T, const String &>::value;
+    static const bool value = JsonVariant::IsConstructibleFrom<T>::value;
   };
 
   // Create an empty JsonArray attached to the specified JsonBuffer.
@@ -80,6 +78,7 @@ class JsonArray : public Internals::JsonPrintable<JsonArray>,
           CanSet<T>::value && !TypeTraits::IsReference<T>::value>::type * = 0) {
     return addNode<T>(value);
   }
+  // bool add(const std::string&)
   // bool add(const String&)
   // bool add(const JsonVariant&);
   // bool add(JsonArray&);
@@ -111,6 +110,7 @@ class JsonArray : public Internals::JsonPrintable<JsonArray>,
           CanSet<T>::value && !TypeTraits::IsReference<T>::value>::type * = 0) {
     return setNodeAt<T>(index, value);
   }
+  // bool set(size_t index, const std::string&)
   // bool set(size_t index, const String&)
   // bool set(size_t index, const JsonVariant&);
   // bool set(size_t index, JsonArray&);
@@ -243,9 +243,36 @@ class JsonArray : public Internals::JsonPrintable<JsonArray>,
   }
 
   template <typename T>
-  bool setNodeValue(node_type *node, T value) {
+  typename TypeTraits::EnableIf<!TypeTraits::IsStringReference<T>::value,
+                                bool>::type
+  setNodeValue(node_type *node, T value) {
     node->content = value;
     return true;
   }
+
+  template <typename T>
+  typename TypeTraits::EnableIf<TypeTraits::IsStringReference<T>::value,
+                                bool>::type
+  setNodeValue(node_type *node, T value) {
+    const char *copy = duplicateString(value);
+    if (!copy) return false;
+    node->content = copy;
+    return true;
+  }
+
+  template <typename TString>
+  char *duplicateString(const TString &);
+};
+
+// Declare that we can set a JsonArray element from
+// - String&
+// - const String&
+// - std::string&
+// - cont std::string&
+template <typename T>
+struct JsonArray::CanSet<
+    T &, typename TypeTraits::EnableIf<TypeTraits::IsString<
+             typename TypeTraits::RemoveConst<T>::type>::value>::type> {
+  const static bool value = true;
 };
 }

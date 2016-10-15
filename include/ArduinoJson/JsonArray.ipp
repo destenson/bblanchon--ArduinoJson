@@ -31,12 +31,9 @@ inline JsonVariant::JsonVariant(JsonObject &object) {
   }
 }
 
-template <>
-inline bool JsonArray::setNodeValue(node_type *node, String &value) {
-  const char *copy = _buffer->strdup(value);
-  if (!copy) return false;
-  node->content = copy;
-  return true;
+template <typename TString>
+char *JsonArray::duplicateString(const TString &s) {
+  return _buffer->strdup(s);
 }
 
 template <>
