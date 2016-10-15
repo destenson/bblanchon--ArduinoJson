@@ -366,11 +366,12 @@ struct JsonVariant::IsConstructibleFrom {
       TypeTraits::IsSame<T, const JsonArraySubscript &>::value ||
       TypeTraits::IsSame<T, JsonObject &>::value ||
       TypeTraits::IsSame<T, const JsonObject &>::value ||
-      TypeTraits::IsSame<T, JsonObjectSubscript<const char *> &>::value ||
-      TypeTraits::IsSame<T, const JsonObjectSubscript<const char *> &>::value ||
-      TypeTraits::IsSame<T, JsonObjectSubscript<String> &>::value ||
-      TypeTraits::IsSame<T, const JsonObjectSubscript<String> &>::value ||
       TypeTraits::IsSame<T, JsonVariant &>::value ||
       TypeTraits::IsSame<T, const JsonVariant &>::value;
+};
+
+template <typename TString>
+struct JsonVariant::IsConstructibleFrom<JsonObjectSubscript<TString> > {
+  static const bool value = true;
 };
 }

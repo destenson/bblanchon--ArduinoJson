@@ -54,8 +54,8 @@ class JsonObject : public Internals::JsonPrintable<JsonObject>,
   explicit JsonObject(JsonBuffer* buffer) : Internals::List<JsonPair>(buffer) {}
 
   // Gets or sets the value associated with the specified key.
-  JsonObjectSubscript<const char*> operator[](const char* key);
-  JsonObjectSubscript<const String&> operator[](const String& key);
+  template <typename TString>
+  JsonObjectSubscript<TString> operator[](const TString& key);
 
   // Gets the value associated with the specified key.
   template <typename TString>
