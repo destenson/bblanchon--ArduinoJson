@@ -8,6 +8,7 @@
 #pragma once
 
 #include "../Configuration.hpp"
+#include "../String.hpp"
 #include "DummyPrint.hpp"
 #include "DynamicStringBuilder.hpp"
 #include "IndentedPrint.hpp"
@@ -50,7 +51,7 @@ class JsonPrintable {
   }
 
   size_t printTo(String &str) const {
-    DynamicStringBuilder sb(str);
+    DynamicStringBuilder<String> sb(str);
     return printTo(sb);
   }
 
@@ -70,7 +71,7 @@ class JsonPrintable {
   }
 
   size_t prettyPrintTo(String &str) const {
-    DynamicStringBuilder sb(str);
+    DynamicStringBuilder<String> sb(str);
     return prettyPrintTo(sb);
   }
 
