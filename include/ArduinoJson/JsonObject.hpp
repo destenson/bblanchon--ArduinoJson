@@ -69,7 +69,7 @@ class JsonObject : public Internals::JsonPrintable<JsonObject>,
   // bool set(Key, JsonVariant&);
   template <typename TValue, typename TString>
   bool set(const TString& key, const TValue& value) {
-    return setNodeAt(key, const_cast<TValue&>(value));
+    return setNodeAt(key, value);
   }
   // bool set(Key, float value, uint8_t decimals);
   // bool set(Key, double value, uint8_t decimals);

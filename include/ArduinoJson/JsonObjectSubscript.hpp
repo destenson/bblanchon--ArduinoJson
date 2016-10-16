@@ -62,12 +62,12 @@ class JsonObjectSubscript
   }
 
   template <typename TValue>
-  FORCE_INLINE bool set(TValue value) {
-    return _object.set<TValue>(_key, value);
+  FORCE_INLINE bool set(const TValue& value) {
+    return _object.set(_key, value);
   }
 
   template <typename TValue>
-  FORCE_INLINE bool set(TValue value, uint8_t decimals) {
+  FORCE_INLINE bool set(const TValue& value, uint8_t decimals) {
     return _object.set(_key, value, decimals);
   }
 

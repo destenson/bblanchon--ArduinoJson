@@ -22,13 +22,13 @@ class JsonArraySubscript : public JsonVariantBase<JsonArraySubscript> {
       : _array(array), _index(index) {}
 
   JsonArraySubscript& operator=(const JsonArraySubscript& src) {
-    _array.set<const JsonVariant&>(_index, src);
+    _array.set(_index, src);
     return *this;
   }
 
   template <typename T>
   JsonArraySubscript& operator=(const T& src) {
-    _array.set<T&>(_index, const_cast<T&>(src));
+    _array.set(_index, src);
     return *this;
   }
 
@@ -51,7 +51,7 @@ class JsonArraySubscript : public JsonVariantBase<JsonArraySubscript> {
   }
 
   template <typename TValue>
-  void set(TValue value) {
+  void set(const TValue& value) {
     _array.set(_index, value);
   }
 
