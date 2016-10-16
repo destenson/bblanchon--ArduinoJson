@@ -38,7 +38,7 @@ class JsonObjectSubscript
   }
 
   template <typename T>
-  typename TypeTraits::EnableIf<JsonObject::CanSet<T&>::value,
+  typename TypeTraits::EnableIf<TypeTraits::IsPassByReference<T>::value,
                                 JsonObjectSubscript<TString> >::type&
   operator=(const T& src) {
     _object.set<T&>(_key, const_cast<T&>(src));
@@ -46,7 +46,7 @@ class JsonObjectSubscript
   }
 
   template <typename T>
-  typename TypeTraits::EnableIf<JsonObject::CanSet<T>::value,
+  typename TypeTraits::EnableIf<TypeTraits::IsPassByValue<T>::value,
                                 JsonObjectSubscript<TString> >::type&
   operator=(T src) {
     _object.set<T>(_key, src);

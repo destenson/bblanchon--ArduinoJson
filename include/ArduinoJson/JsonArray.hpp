@@ -69,8 +69,6 @@ class JsonArray : public Internals::JsonPrintable<JsonArray>,
   // bool add(const char[]);
   // bool add(const char[N]);
   // bool add(RawJson);
-  // bool add(JsonObjectSubscript<TString>);
-  // bool add(JsonArraySubscript);
   template <typename T>
   typename TypeTraits::EnableIf<TypeTraits::IsPassByValue<T>::value, bool>::type
   add(T value) {
@@ -90,9 +88,9 @@ class JsonArray : public Internals::JsonPrintable<JsonArray>,
   // bool add(float value, uint8_t decimals);
   // bool add(double value, uint8_t decimals);
   template <typename T>
-  bool add(T value, uint8_t decimals,
-           typename TypeTraits::EnableIf<
-               TypeTraits::IsFloatingPoint<T>::value>::type * = 0) {
+  typename TypeTraits::EnableIf<TypeTraits::IsFloatingPoint<T>::value,
+                                bool>::type
+  add(T value, uint8_t decimals) {
     return addNode<JsonVariant>(JsonVariant(value, decimals));
   }
 
@@ -121,9 +119,9 @@ class JsonArray : public Internals::JsonPrintable<JsonArray>,
   // bool set(size_t index, float value, uint8_t decimals = 2);
   // bool set(size_t index, double value, uint8_t decimals = 2);
   template <typename T>
-  bool set(size_t index, T value, uint8_t decimals,
-           typename TypeTraits::EnableIf<
-               TypeTraits::IsFloatingPoint<T>::value>::type * = 0) {
+  typename TypeTraits::EnableIf<TypeTraits::IsFloatingPoint<T>::value,
+                                bool>::type
+  set(size_t index, T value, uint8_t decimals) {
     return setNodeAt<const JsonVariant &>(index, JsonVariant(value, decimals));
   }
 

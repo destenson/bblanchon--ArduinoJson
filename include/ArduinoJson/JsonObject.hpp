@@ -39,13 +39,6 @@ class JsonObject : public Internals::JsonPrintable<JsonObject>,
                    public Internals::List<JsonPair>,
                    public Internals::JsonBufferAllocated {
  public:
-  // A meta-function that returns true if type T can be used in
-  // JsonObject::set()
-  template <typename T>
-  struct CanSet {
-    static const bool value = JsonVariant::IsConstructibleFrom<T>::value;
-  };
-
   // Create an empty JsonArray attached to the specified JsonBuffer.
   // You should not use this constructor directly.
   // Instead, use JsonBuffer::createObject() or JsonBuffer.parseObject().
@@ -72,10 +65,9 @@ class JsonObject : public Internals::JsonPrintable<JsonObject>,
   // bool set(TKey key, const char* value);
   // bool set(TKey key, RawJson value);
   template <typename TValue, typename TString>
-  bool set(const TString& key, TValue value,
-           typename TypeTraits::EnableIf<
-               CanSet<TValue>::value &&
-               !TypeTraits::IsReference<TValue>::value>::type* = 0) {
+  typename TypeTraits::EnableIf<TypeTraits::IsPassByValue<TValue>::value,
+                                bool>::type
+  set(const TString& key, TValue value) {
     return setNodeAt<TValue>(key, value);
   }
   // bool set(Key, String&);
@@ -83,16 +75,17 @@ class JsonObject : public Internals::JsonPrintable<JsonObject>,
   // bool set(Key, JsonObject&);
   // bool set(Key, JsonVariant&);
   template <typename TValue, typename TString>
-  bool set(const TString& key, const TValue& value,
-           typename TypeTraits::EnableIf<CanSet<TValue&>::value>::type* = 0) {
+  typename TypeTraits::EnableIf<TypeTraits::IsPassByReference<TValue>::value,
+                                bool>::type
+  set(const TString& key, const TValue& value) {
     return setNodeAt<TValue&>(key, const_cast<TValue&>(value));
   }
   // bool set(Key, float value, uint8_t decimals);
   // bool set(Key, double value, uint8_t decimals);
   template <typename TValue, typename TString>
-  bool set(const TString& key, TValue value, uint8_t decimals,
-           typename TypeTraits::EnableIf<
-               TypeTraits::IsFloatingPoint<TValue>::value>::type* = 0) {
+  typename TypeTraits::EnableIf<TypeTraits::IsFloatingPoint<TValue>::value,
+                                bool>::type
+  set(const TString& key, TValue value, uint8_t decimals) {
     return setNodeAt<const JsonVariant&>(key, JsonVariant(value, decimals));
   }
 
