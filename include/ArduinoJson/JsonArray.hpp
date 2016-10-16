@@ -14,6 +14,8 @@
 #include "JsonVariant.hpp"
 #include "TypeTraits/EnableIf.hpp"
 #include "TypeTraits/IsFloatingPoint.hpp"
+#include "TypeTraits/IsPassByReference.hpp"
+#include "TypeTraits/IsPassByValue.hpp"
 #include "TypeTraits/IsReference.hpp"
 #include "TypeTraits/IsSame.hpp"
 
@@ -40,13 +42,6 @@ class JsonArray : public Internals::JsonPrintable<JsonArray>,
                   public Internals::List<JsonVariant>,
                   public Internals::JsonBufferAllocated {
  public:
-  // A meta-function that returns true if type T can be used in
-  // JsonArray::set()
-  template <typename T, typename Enable = void>
-  struct CanSet {
-    static const bool value = JsonVariant::IsConstructibleFrom<T>::value;
-  };
-
   // Create an empty JsonArray attached to the specified JsonBuffer.
   // You should not call this constructor directly.
   // Instead, use JsonBuffer::createArray() or JsonBuffer::parseArray().
@@ -71,11 +66,14 @@ class JsonArray : public Internals::JsonPrintable<JsonArray>,
   // bool add(float value);
   // bool add(double value);
   // bool add(const char*);
+  // bool add(const char[]);
+  // bool add(const char[N]);
+  // bool add(RawJson);
+  // bool add(JsonObjectSubscript<TString>);
+  // bool add(JsonArraySubscript);
   template <typename T>
-  bool add(
-      T value,
-      typename TypeTraits::EnableIf<
-          CanSet<T>::value && !TypeTraits::IsReference<T>::value>::type * = 0) {
+  typename TypeTraits::EnableIf<TypeTraits::IsPassByValue<T>::value, bool>::type
+  add(T value) {
     return addNode<T>(value);
   }
   // bool add(const std::string&)
@@ -84,8 +82,9 @@ class JsonArray : public Internals::JsonPrintable<JsonArray>,
   // bool add(JsonArray&);
   // bool add(JsonObject&);
   template <typename T>
-  bool add(const T &value,
-           typename TypeTraits::EnableIf<CanSet<T &>::value>::type * = 0) {
+  typename TypeTraits::EnableIf<TypeTraits::IsPassByReference<T>::value,
+                                bool>::type
+  add(const T &value) {
     return addNode<T &>(const_cast<T &>(value));
   }
   // bool add(float value, uint8_t decimals);
@@ -104,10 +103,8 @@ class JsonArray : public Internals::JsonPrintable<JsonArray>,
   // bool set(size_t index, int value);
   // bool set(size_t index, short value);
   template <typename T>
-  bool set(
-      size_t index, T value,
-      typename TypeTraits::EnableIf<
-          CanSet<T>::value && !TypeTraits::IsReference<T>::value>::type * = 0) {
+  typename TypeTraits::EnableIf<TypeTraits::IsPassByValue<T>::value, bool>::type
+  set(size_t index, T value) {
     return setNodeAt<T>(index, value);
   }
   // bool set(size_t index, const std::string&)
@@ -116,8 +113,9 @@ class JsonArray : public Internals::JsonPrintable<JsonArray>,
   // bool set(size_t index, JsonArray&);
   // bool set(size_t index, JsonObject&);
   template <typename T>
-  bool set(size_t index, const T &value,
-           typename TypeTraits::EnableIf<CanSet<T &>::value>::type * = 0) {
+  typename TypeTraits::EnableIf<TypeTraits::IsPassByReference<T>::value,
+                                bool>::type
+  set(size_t index, const T &value) {
     return setNodeAt<T &>(index, const_cast<T &>(value));
   }
   // bool set(size_t index, float value, uint8_t decimals = 2);

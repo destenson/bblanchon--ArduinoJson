@@ -16,8 +16,8 @@
 #include "JsonVariantBase.hpp"
 #include "RawJson.hpp"
 #include "TypeTraits/EnableIf.hpp"
+#include "TypeTraits/IsArithmetic.hpp"
 #include "TypeTraits/IsFloatingPoint.hpp"
-#include "TypeTraits/IsIntegral.hpp"
 #include "TypeTraits/IsSame.hpp"
 #include "TypeTraits/RemoveConst.hpp"
 #include "TypeTraits/RemoveReference.hpp"
@@ -230,7 +230,8 @@ class JsonVariant : public JsonVariantBase<JsonVariant> {
   // int as<int>() const;
   // long as<long>() const;
   template <typename T>
-  const typename TypeTraits::EnableIf<TypeTraits::IsIntegral<T>::value,
+  const typename TypeTraits::EnableIf<TypeTraits::IsIntegral<T>::value &&
+                                          !TypeTraits::IsSame<T, bool>::value,
                                       bool>::type
   is() const {
     return isInteger();
@@ -354,9 +355,7 @@ inline JsonVariant double_with_n_digits(double value, uint8_t digits) {
 template <typename T, typename Enable>
 struct JsonVariant::IsConstructibleFrom {
   static const bool value =
-      TypeTraits::IsIntegral<T>::value ||
-      TypeTraits::IsFloatingPoint<T>::value ||
-      TypeTraits::IsSame<T, bool>::value ||
+      TypeTraits::IsArithmetic<T>::value ||
       TypeTraits::IsSame<T, char *>::value ||
       TypeTraits::IsSame<T, const char *>::value ||
       TypeTraits::IsSame<T, RawJson>::value ||

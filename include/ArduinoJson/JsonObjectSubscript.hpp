@@ -90,6 +90,13 @@ class JsonObjectSubscript
   TStringRef _key;
 };
 
+namespace TypeTraits {
+template <class TString>
+struct IsPassByValue<JsonObjectSubscript<TString> > {
+  static const bool value = true;
+};
+}
+
 #if ARDUINOJSON_ENABLE_STD_STREAM
 template <typename TString>
 inline std::ostream& operator<<(std::ostream& os,
