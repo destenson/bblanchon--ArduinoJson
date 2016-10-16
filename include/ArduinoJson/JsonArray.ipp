@@ -31,11 +31,6 @@ inline JsonVariant::JsonVariant(JsonObject &object) {
   }
 }
 
-template <typename TString>
-char *JsonArray::duplicateString(const TString &s) {
-  return _buffer->strdup(s);
-}
-
 template <>
 inline JsonArray &JsonVariant::defaultValue<JsonArray>() {
   return JsonArray::invalid();

@@ -40,7 +40,7 @@ class JsonVariant : public JsonVariantBase<JsonVariant> {
                                                    JsonWriter &);
 
  public:
-  template <typename T>
+  template <typename T, typename Enable = void>
   struct IsConstructibleFrom;
 
   // Creates an uninitialized JsonVariant
@@ -351,7 +351,7 @@ inline JsonVariant double_with_n_digits(double value, uint8_t digits) {
   return JsonVariant(value, digits);
 }
 
-template <typename T>
+template <typename T, typename Enable>
 struct JsonVariant::IsConstructibleFrom {
   static const bool value =
       TypeTraits::IsIntegral<T>::value ||
@@ -373,5 +373,17 @@ struct JsonVariant::IsConstructibleFrom {
 template <typename TString>
 struct JsonVariant::IsConstructibleFrom<JsonObjectSubscript<TString> > {
   static const bool value = true;
+};
+
+// Declare that we can set a JsonArray element from
+// - String&
+// - const String&
+// - std::string&
+// - cont std::string&
+template <typename T>
+struct JsonVariant::IsConstructibleFrom<
+    T &, typename TypeTraits::EnableIf<TypeTraits::IsString<
+             typename TypeTraits::RemoveConst<T>::type>::value>::type> {
+  const static bool value = true;
 };
 }

@@ -43,9 +43,7 @@ class JsonObject : public Internals::JsonPrintable<JsonObject>,
   // JsonObject::set()
   template <typename T>
   struct CanSet {
-    static const bool value = JsonVariant::IsConstructibleFrom<T>::value ||
-                              TypeTraits::IsSame<T, String&>::value ||
-                              TypeTraits::IsSame<T, const String&>::value;
+    static const bool value = JsonVariant::IsConstructibleFrom<T>::value;
   };
 
   // Create an empty JsonArray attached to the specified JsonBuffer.
@@ -183,9 +181,21 @@ class JsonObject : public Internals::JsonPrintable<JsonObject>,
     return node->content.key != NULL;
   }
 
-  template <typename TValue>
-  bool setNodeValue(node_type* node, TValue value) {
+  template <typename T>
+  typename TypeTraits::EnableIf<!TypeTraits::IsStringReference<T>::value,
+                                bool>::type
+  setNodeValue(node_type* node, T value) {
     node->content.value = value;
+    return true;
+  }
+
+  template <typename T>
+  typename TypeTraits::EnableIf<TypeTraits::IsStringReference<T>::value,
+                                bool>::type
+  setNodeValue(node_type* node, T value) {
+    const char* copy = duplicateString(value);
+    if (!copy) return false;
+    node->content.value = copy;
     return true;
   }
 

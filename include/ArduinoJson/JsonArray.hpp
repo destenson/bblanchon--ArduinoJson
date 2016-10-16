@@ -259,20 +259,5 @@ class JsonArray : public Internals::JsonPrintable<JsonArray>,
     node->content = copy;
     return true;
   }
-
-  template <typename TString>
-  char *duplicateString(const TString &);
-};
-
-// Declare that we can set a JsonArray element from
-// - String&
-// - const String&
-// - std::string&
-// - cont std::string&
-template <typename T>
-struct JsonArray::CanSet<
-    T &, typename TypeTraits::EnableIf<TypeTraits::IsString<
-             typename TypeTraits::RemoveConst<T>::type>::value>::type> {
-  const static bool value = true;
 };
 }

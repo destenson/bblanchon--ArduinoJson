@@ -14,20 +14,6 @@
 namespace ArduinoJson {
 
 template <>
-inline bool JsonObject::setNodeValue(node_type *node, String &value) {
-  const char *dup = _buffer->strdup(value);
-  node->content.value = dup;
-  return dup != NULL;
-}
-
-template <>
-inline bool JsonObject::setNodeValue(node_type *node, const String &value) {
-  const char *dup = _buffer->strdup(value);
-  node->content.value = dup;
-  return dup != NULL;
-}
-
-template <>
 inline const JsonObject &JsonVariant::defaultValue<const JsonObject &>() {
   return JsonObject::invalid();
 }

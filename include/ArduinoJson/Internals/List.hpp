@@ -87,6 +87,11 @@ class List {
     }
   }
 
+  template <typename TString>
+  char *duplicateString(const TString &s) {
+    return _buffer->strdup(s);
+  }
+
   JsonBuffer *_buffer;
   node_type *_firstNode;
 };
