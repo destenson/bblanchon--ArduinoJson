@@ -70,7 +70,7 @@ class JsonObject : public Internals::JsonPrintable<JsonObject>,
   // bool set(Key, JsonVariant&);
   template <typename TValue, typename TString>
   bool set(const TString& key, const TValue& value) {
-    return setNodeAt<TValue&>(key, const_cast<TValue&>(value));
+    return setNodeAt(key, const_cast<TValue&>(value));
   }
   // bool set(Key, float value, uint8_t decimals);
   // bool set(Key, double value, uint8_t decimals);
@@ -78,7 +78,7 @@ class JsonObject : public Internals::JsonPrintable<JsonObject>,
   typename TypeTraits::EnableIf<TypeTraits::IsFloatingPoint<TValue>::value,
                                 bool>::type
   set(const TString& key, TValue value, uint8_t decimals) {
-    return setNodeAt<const JsonVariant&>(key, JsonVariant(value, decimals));
+    return setNodeAt(key, JsonVariant(value, decimals));
   }
 
   // Gets the value associated with the specified key.
@@ -145,13 +145,13 @@ class JsonObject : public Internals::JsonPrintable<JsonObject>,
   }
 
   template <typename TValue, typename TString>
-  bool setNodeAt(const TString& key, TValue value) {
+  bool setNodeAt(const TString& key, const TValue& value) {
     node_type* node = getNodeAt(key);
     if (!node) {
       node = addNewNode();
       if (!node || !setNodeKey(node, key)) return false;
     }
-    return setNodeValue<TValue>(node, value);
+    return setNodeValue(node, value);
   }
 
   bool setNodeKey(node_type* node, const char* key) {
@@ -167,17 +167,15 @@ class JsonObject : public Internals::JsonPrintable<JsonObject>,
   }
 
   template <typename T>
-  typename TypeTraits::EnableIf<!TypeTraits::IsStringReference<T>::value,
-                                bool>::type
-  setNodeValue(node_type* node, T value) {
+  typename TypeTraits::EnableIf<!TypeTraits::IsString<T>::value, bool>::type
+  setNodeValue(node_type* node, const T& value) {
     node->content.value = value;
     return true;
   }
 
   template <typename T>
-  typename TypeTraits::EnableIf<TypeTraits::IsStringReference<T>::value,
-                                bool>::type
-  setNodeValue(node_type* node, T value) {
+  typename TypeTraits::EnableIf<TypeTraits::IsString<T>::value, bool>::type
+  setNodeValue(node_type* node, const T& value) {
     const char* copy = duplicateString(value);
     if (!copy) return false;
     node->content.value = copy;

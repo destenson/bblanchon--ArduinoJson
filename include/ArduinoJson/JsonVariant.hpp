@@ -107,10 +107,14 @@ class JsonVariant : public JsonVariantBase<JsonVariant> {
   }
 
   // Create a JsonVariant containing a reference to an array.
-  JsonVariant(JsonArray &array);
+  // CAUTION: we are lying about constness, because the array can be modified if
+  // the variant is converted back to a JsonArray&
+  JsonVariant(const JsonArray &array);
 
   // Create a JsonVariant containing a reference to an object.
-  JsonVariant(JsonObject &object);
+  // CAUTION: we are lying about constness, because the object can be modified
+  // if the variant is converted back to a JsonObject&
+  JsonVariant(const JsonObject &object);
 
   // Get the variant as the specified type.
   //

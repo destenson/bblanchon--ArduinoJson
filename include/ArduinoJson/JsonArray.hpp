@@ -74,13 +74,13 @@ class JsonArray : public Internals::JsonPrintable<JsonArray>,
   // bool add(JsonObject&);
   template <typename T>
   bool add(const T &value) {
-    return addNode<T &>(const_cast<T &>(value));
+    return addNode(value);
   }
   // bool add(float value, uint8_t decimals);
   // bool add(double value, uint8_t decimals);
   template <typename T>
   bool add(T value, uint8_t decimals) {
-    return addNode<JsonVariant>(JsonVariant(value, decimals));
+    return addNode(JsonVariant(value, decimals));
   }
 
   // Sets the value at specified index.
@@ -96,7 +96,7 @@ class JsonArray : public Internals::JsonPrintable<JsonArray>,
   // bool set(size_t index, JsonObject&);
   template <typename T>
   bool set(size_t index, const T &value) {
-    return setNodeAt<T &>(index, const_cast<T &>(value));
+    return setNodeAt(index, value);
   }
   // bool set(size_t index, float value, uint8_t decimals = 2);
   // bool set(size_t index, double value, uint8_t decimals = 2);
@@ -104,7 +104,7 @@ class JsonArray : public Internals::JsonPrintable<JsonArray>,
   typename TypeTraits::EnableIf<TypeTraits::IsFloatingPoint<T>::value,
                                 bool>::type
   set(size_t index, T value, uint8_t decimals) {
-    return setNodeAt<const JsonVariant &>(index, JsonVariant(value, decimals));
+    return setNodeAt(index, JsonVariant(value, decimals));
   }
 
   // Gets the value at the specified index.
@@ -209,29 +209,27 @@ class JsonArray : public Internals::JsonPrintable<JsonArray>,
   }
 
   template <typename TValue>
-  bool setNodeAt(size_t index, TValue value) {
+  bool setNodeAt(size_t index, const TValue &value) {
     node_type *node = getNodeAt(index);
-    return node != NULL && setNodeValue<TValue>(node, value);
+    return node != NULL && setNodeValue(node, value);
   }
 
   template <typename TValue>
-  bool addNode(TValue value) {
+  bool addNode(const TValue &value) {
     node_type *node = addNewNode();
-    return node != NULL && setNodeValue<TValue>(node, value);
+    return node != NULL && setNodeValue(node, value);
   }
 
   template <typename T>
-  typename TypeTraits::EnableIf<!TypeTraits::IsStringReference<T>::value,
-                                bool>::type
-  setNodeValue(node_type *node, T value) {
+  typename TypeTraits::EnableIf<!TypeTraits::IsString<T>::value, bool>::type
+  setNodeValue(node_type *node, const T &value) {
     node->content = value;
     return true;
   }
 
   template <typename T>
-  typename TypeTraits::EnableIf<TypeTraits::IsStringReference<T>::value,
-                                bool>::type
-  setNodeValue(node_type *node, T value) {
+  typename TypeTraits::EnableIf<TypeTraits::IsString<T>::value, bool>::type
+  setNodeValue(node_type *node, const T &value) {
     const char *copy = duplicateString(value);
     if (!copy) return false;
     node->content = copy;
