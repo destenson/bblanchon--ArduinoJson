@@ -14,8 +14,6 @@
 #include "JsonVariant.hpp"
 #include "TypeTraits/EnableIf.hpp"
 #include "TypeTraits/IsFloatingPoint.hpp"
-#include "TypeTraits/IsPassByReference.hpp"
-#include "TypeTraits/IsPassByValue.hpp"
 #include "TypeTraits/IsReference.hpp"
 #include "TypeTraits/IsSame.hpp"
 
@@ -69,28 +67,19 @@ class JsonArray : public Internals::JsonPrintable<JsonArray>,
   // bool add(const char[]);
   // bool add(const char[N]);
   // bool add(RawJson);
-  template <typename T>
-  typename TypeTraits::EnableIf<TypeTraits::IsPassByValue<T>::value, bool>::type
-  add(T value) {
-    return addNode<T>(value);
-  }
   // bool add(const std::string&)
   // bool add(const String&)
   // bool add(const JsonVariant&);
   // bool add(JsonArray&);
   // bool add(JsonObject&);
   template <typename T>
-  typename TypeTraits::EnableIf<TypeTraits::IsPassByReference<T>::value,
-                                bool>::type
-  add(const T &value) {
+  bool add(const T &value) {
     return addNode<T &>(const_cast<T &>(value));
   }
   // bool add(float value, uint8_t decimals);
   // bool add(double value, uint8_t decimals);
   template <typename T>
-  typename TypeTraits::EnableIf<TypeTraits::IsFloatingPoint<T>::value,
-                                bool>::type
-  add(T value, uint8_t decimals) {
+  bool add(T value, uint8_t decimals) {
     return addNode<JsonVariant>(JsonVariant(value, decimals));
   }
 
@@ -100,20 +89,13 @@ class JsonArray : public Internals::JsonPrintable<JsonArray>,
   // bool set(size_t index, long value);
   // bool set(size_t index, int value);
   // bool set(size_t index, short value);
-  template <typename T>
-  typename TypeTraits::EnableIf<TypeTraits::IsPassByValue<T>::value, bool>::type
-  set(size_t index, T value) {
-    return setNodeAt<T>(index, value);
-  }
   // bool set(size_t index, const std::string&)
   // bool set(size_t index, const String&)
   // bool set(size_t index, const JsonVariant&);
   // bool set(size_t index, JsonArray&);
   // bool set(size_t index, JsonObject&);
   template <typename T>
-  typename TypeTraits::EnableIf<TypeTraits::IsPassByReference<T>::value,
-                                bool>::type
-  set(size_t index, const T &value) {
+  bool set(size_t index, const T &value) {
     return setNodeAt<T &>(index, const_cast<T &>(value));
   }
   // bool set(size_t index, float value, uint8_t decimals = 2);

@@ -27,18 +27,8 @@ class JsonArraySubscript : public JsonVariantBase<JsonArraySubscript> {
   }
 
   template <typename T>
-  typename TypeTraits::EnableIf<TypeTraits::IsPassByReference<T>::value,
-                                JsonArraySubscript>::type&
-  operator=(const T& src) {
+  JsonArraySubscript& operator=(const T& src) {
     _array.set<T&>(_index, const_cast<T&>(src));
-    return *this;
-  }
-
-  template <typename T>
-  typename TypeTraits::EnableIf<TypeTraits::IsPassByValue<T>::value,
-                                JsonArraySubscript>::type&
-  operator=(T src) {
-    _array.set<T>(_index, src);
     return *this;
   }
 
@@ -69,13 +59,6 @@ class JsonArraySubscript : public JsonVariantBase<JsonArraySubscript> {
   JsonArray& _array;
   const size_t _index;
 };
-
-namespace TypeTraits {
-template <>
-struct IsPassByValue<JsonArraySubscript> {
-  static const bool value = true;
-};
-}
 
 #if ARDUINOJSON_ENABLE_STD_STREAM
 inline std::ostream& operator<<(std::ostream& os,

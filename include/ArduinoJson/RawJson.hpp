@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "TypeTraits/IsPassByValue.hpp"
-
 namespace ArduinoJson {
 
 // A special type of data that can be used to insert pregenerated JSON portions.
@@ -22,11 +20,4 @@ class RawJson {
  private:
   const char* _str;
 };
-
-namespace TypeTraits {
-template <>
-struct IsPassByValue<RawJson> {
-  const static bool value = true;
-};
-}
 }

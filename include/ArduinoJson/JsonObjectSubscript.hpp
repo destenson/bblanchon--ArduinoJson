@@ -33,23 +33,13 @@ class JsonObjectSubscript
 
   JsonObjectSubscript<TString>& operator=(
       const JsonObjectSubscript<TString>& src) {
-    _object.set<const JsonVariant&>(_key, src);
+    _object.set(_key, src);
     return *this;
   }
 
   template <typename T>
-  typename TypeTraits::EnableIf<TypeTraits::IsPassByReference<T>::value,
-                                JsonObjectSubscript<TString> >::type&
-  operator=(const T& src) {
-    _object.set<T&>(_key, const_cast<T&>(src));
-    return *this;
-  }
-
-  template <typename T>
-  typename TypeTraits::EnableIf<TypeTraits::IsPassByValue<T>::value,
-                                JsonObjectSubscript<TString> >::type&
-  operator=(T src) {
-    _object.set<T>(_key, src);
+  JsonObjectSubscript<TString>& operator=(const T& src) {
+    _object.set(_key, src);
     return *this;
   }
 
@@ -89,13 +79,6 @@ class JsonObjectSubscript
   JsonObject& _object;
   TStringRef _key;
 };
-
-namespace TypeTraits {
-template <class TString>
-struct IsPassByValue<JsonObjectSubscript<TString> > {
-  static const bool value = true;
-};
-}
 
 #if ARDUINOJSON_ENABLE_STD_STREAM
 template <typename TString>

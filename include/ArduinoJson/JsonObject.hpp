@@ -64,20 +64,12 @@ class JsonObject : public Internals::JsonPrintable<JsonObject>,
   // bool set(TKey key, double value);
   // bool set(TKey key, const char* value);
   // bool set(TKey key, RawJson value);
-  template <typename TValue, typename TString>
-  typename TypeTraits::EnableIf<TypeTraits::IsPassByValue<TValue>::value,
-                                bool>::type
-  set(const TString& key, TValue value) {
-    return setNodeAt<TValue>(key, value);
-  }
   // bool set(Key, String&);
   // bool set(Key, JsonArray&);
   // bool set(Key, JsonObject&);
   // bool set(Key, JsonVariant&);
   template <typename TValue, typename TString>
-  typename TypeTraits::EnableIf<TypeTraits::IsPassByReference<TValue>::value,
-                                bool>::type
-  set(const TString& key, const TValue& value) {
+  bool set(const TString& key, const TValue& value) {
     return setNodeAt<TValue&>(key, const_cast<TValue&>(value));
   }
   // bool set(Key, float value, uint8_t decimals);
