@@ -16,9 +16,11 @@
 #include "JsonVariantBase.hpp"
 #include "RawJson.hpp"
 #include "TypeTraits/EnableIf.hpp"
-#include "TypeTraits/IsArithmetic.hpp"
 #include "TypeTraits/IsFloatingPoint.hpp"
+#include "TypeTraits/IsIntegral.hpp"
 #include "TypeTraits/IsSame.hpp"
+#include "TypeTraits/IsSignedIntegral.hpp"
+#include "TypeTraits/IsUnsignedIntegral.hpp"
 #include "TypeTraits/RemoveConst.hpp"
 #include "TypeTraits/RemoveReference.hpp"
 
