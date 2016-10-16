@@ -14,7 +14,6 @@
 #include "JsonVariant.hpp"
 #include "TypeTraits/EnableIf.hpp"
 #include "TypeTraits/IsFloatingPoint.hpp"
-#include "TypeTraits/IsReference.hpp"
 #include "TypeTraits/IsSame.hpp"
 
 // Returns the size (in bytes) of an array with n elements.
