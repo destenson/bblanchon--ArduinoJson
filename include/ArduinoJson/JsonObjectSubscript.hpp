@@ -31,14 +31,14 @@ class JsonObjectSubscript
   FORCE_INLINE JsonObjectSubscript(JsonObject& object, TStringRef key)
       : _object(object), _key(key) {}
 
-  JsonObjectSubscript<TString>& operator=(
+  FORCE_INLINE JsonObjectSubscript<TString>& operator=(
       const JsonObjectSubscript<TString>& src) {
     _object.set(_key, src);
     return *this;
   }
 
   template <typename T>
-  JsonObjectSubscript<TString>& operator=(const T& src) {
+  FORCE_INLINE JsonObjectSubscript<TString>& operator=(const T& src) {
     _object.set(_key, src);
     return *this;
   }
