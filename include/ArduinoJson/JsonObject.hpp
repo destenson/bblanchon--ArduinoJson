@@ -181,12 +181,12 @@ class JsonObject : public Internals::JsonPrintable<JsonObject>,
     return true;
   }
 
-  static bool areKeysEqual(const char* key1, const char* key2) {
+  FORCE_INLINE static bool areKeysEqual(const char* key1, const char* key2) {
     return !strcmp(key1, key2);
   }
 
   template <typename TString>
-  static bool areKeysEqual(const char* key1, const TString& key2) {
+  FORCE_INLINE static bool areKeysEqual(const char* key1, const TString& key2) {
     return !strcmp(key1, key2.c_str());
   }
 };
