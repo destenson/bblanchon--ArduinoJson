@@ -40,9 +40,6 @@ class JsonVariant : public JsonVariantBase<JsonVariant> {
                                                    JsonWriter &);
 
  public:
-  template <typename T, typename Enable = void>
-  struct IsConstructibleFrom;
-
   // Creates an uninitialized JsonVariant
   JsonVariant() : _type(Internals::JSON_UNDEFINED) {}
 
@@ -351,38 +348,4 @@ inline JsonVariant float_with_n_digits(float value, uint8_t digits) {
 inline JsonVariant double_with_n_digits(double value, uint8_t digits) {
   return JsonVariant(value, digits);
 }
-
-template <typename T, typename Enable>
-struct JsonVariant::IsConstructibleFrom {
-  static const bool value =
-      TypeTraits::IsArithmetic<T>::value ||
-      TypeTraits::IsSame<T, char *>::value ||
-      TypeTraits::IsSame<T, const char *>::value ||
-      TypeTraits::IsSame<T, RawJson>::value ||
-      TypeTraits::IsSame<T, JsonArray &>::value ||
-      TypeTraits::IsSame<T, const JsonArray &>::value ||
-      TypeTraits::IsSame<T, JsonArraySubscript &>::value ||
-      TypeTraits::IsSame<T, const JsonArraySubscript &>::value ||
-      TypeTraits::IsSame<T, JsonObject &>::value ||
-      TypeTraits::IsSame<T, const JsonObject &>::value ||
-      TypeTraits::IsSame<T, JsonVariant &>::value ||
-      TypeTraits::IsSame<T, const JsonVariant &>::value;
-};
-
-template <typename TString>
-struct JsonVariant::IsConstructibleFrom<JsonObjectSubscript<TString> > {
-  static const bool value = true;
-};
-
-// Declare that we can set a JsonArray element from
-// - String&
-// - const String&
-// - std::string&
-// - cont std::string&
-template <typename T>
-struct JsonVariant::IsConstructibleFrom<
-    T &, typename TypeTraits::EnableIf<TypeTraits::IsString<
-             typename TypeTraits::RemoveConst<T>::type>::value>::type> {
-  const static bool value = true;
-};
 }
