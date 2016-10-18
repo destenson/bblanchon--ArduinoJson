@@ -5,8 +5,8 @@
 // https://github.com/bblanchon/ArduinoJson
 // If you like this project, please add a star!
 
-#include <gtest/gtest.h>
 #include <ArduinoJson.h>
+#include <gtest/gtest.h>
 
 class ArduinoStringTests : public ::testing::Test {
  protected:
@@ -95,7 +95,7 @@ TEST_F(ArduinoStringTests, JsonObject_SetToObjectSubscript) {
 TEST_F(ArduinoStringTests, JsonObject_Get) {
   char json[] = "{\"key\":\"value\"}";
   const JsonObject &object = _jsonBuffer.parseObject(json);
-  ASSERT_STREQ("value", object.get(String("key")));
+  ASSERT_STREQ("value", object.get<const char *>(String("key")));
 }
 
 TEST_F(ArduinoStringTests, JsonObject_GetT) {

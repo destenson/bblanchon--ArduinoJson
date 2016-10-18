@@ -47,10 +47,6 @@ class JsonObjectSubscript
     return _object.containsKey(_key);
   }
 
-  FORCE_INLINE operator JsonVariant() const {
-    return _object.get(_key);
-  }
-
   template <typename TValue>
   FORCE_INLINE typename Internals::JsonVariantAs<TValue>::type as() const {
     return _object.get<TValue, TStringRef>(_key);

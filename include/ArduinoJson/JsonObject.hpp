@@ -50,7 +50,7 @@ class JsonObject : public Internals::JsonPrintable<JsonObject>,
   // Gets the value associated with the specified key.
   template <typename TString>
   JsonVariant operator[](const TString& key) const {
-    return get(key);
+    return get<JsonVariant>(key);
   }
 
   // Sets the specified key with the specified value.
@@ -78,13 +78,6 @@ class JsonObject : public Internals::JsonPrintable<JsonObject>,
                                 bool>::type
   set(const TString& key, TValue value, uint8_t decimals) {
     return setNodeAt(key, JsonVariant(value, decimals));
-  }
-
-  // Gets the value associated with the specified key.
-  template <typename TString>
-  JsonVariant get(const TString& key) const {
-    node_type* node = getNodeAt(key);
-    return node ? node->content.value : JsonVariant();
   }
 
   // Gets the value associated with the specified key.
