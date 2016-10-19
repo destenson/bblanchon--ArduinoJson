@@ -136,6 +136,13 @@ class JsonObject : public Internals::JsonPrintable<JsonObject>,
     return NULL;
   }
 
+  node_type* getNodeAt(const char* key) const {
+    for (node_type* node = _firstNode; node; node = node->next) {
+      if (areKeysEqual(node->content.key, key)) return node;
+    }
+    return NULL;
+  }
+
   template <typename TValue, typename TString>
   bool setNodeAt(const TString& key, const TValue& value) {
     node_type* node = getNodeAt(key);
