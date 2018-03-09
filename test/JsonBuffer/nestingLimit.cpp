@@ -13,35 +13,33 @@ TEST_CASE("JsonParser nestingLimit") {
 
   SECTION("parseArray()") {
     SECTION("limit = 0") {
-      SHOULD_WORK(jb.parseArray("[]", 0));
-      SHOULD_FAIL(jb.parseArray("[[]]", 0));
+      SHOULD_FAIL(jb.parseArray("[]", 0));
     }
 
     SECTION("limit = 1") {
-      SHOULD_WORK(jb.parseArray("[[]]", 1));
-      SHOULD_FAIL(jb.parseArray("[[[]]]", 1));
+      SHOULD_WORK(jb.parseArray("[]", 1));
+      SHOULD_FAIL(jb.parseArray("[[]]", 1));
     }
 
     SECTION("limit = 2") {
-      SHOULD_WORK(jb.parseArray("[[[]]]", 2));
-      SHOULD_FAIL(jb.parseArray("[[[[]]]]", 2));
+      SHOULD_WORK(jb.parseArray("[[]]", 2));
+      SHOULD_FAIL(jb.parseArray("[[[]]]", 2));
     }
   }
 
   SECTION("parseObject()") {
     SECTION("limit = 0") {
-      SHOULD_WORK(jb.parseObject("{}", 0));
-      SHOULD_FAIL(jb.parseObject("{\"key\":{}}", 0));
+      SHOULD_FAIL(jb.parseObject("{}", 0));
     }
 
     SECTION("limit = 1") {
-      SHOULD_WORK(jb.parseObject("{\"key\":{}}", 1));
-      SHOULD_FAIL(jb.parseObject("{\"key\":{\"key\":{}}}", 1));
+      SHOULD_WORK(jb.parseObject("{\"key\":42}", 1));
+      SHOULD_FAIL(jb.parseObject("{\"key\":{\"key\":42}}", 1));
     }
 
     SECTION("limit = 2") {
-      SHOULD_WORK(jb.parseObject("{\"key\":{\"key\":{}}}", 2));
-      SHOULD_FAIL(jb.parseObject("{\"key\":{\"key\":{\"key\":{}}}}", 2));
+      SHOULD_WORK(jb.parseObject("{\"key\":{\"key\":42}}", 2));
+      SHOULD_FAIL(jb.parseObject("{\"key\":{\"key\":{\"key\":42}}}", 2));
     }
   }
 

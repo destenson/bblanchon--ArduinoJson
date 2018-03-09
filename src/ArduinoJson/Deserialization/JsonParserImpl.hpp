@@ -37,6 +37,9 @@ ArduinoJson::Internals::JsonParser<TReader, TWriter>::parseAnythingTo(
 template <typename TReader, typename TWriter>
 inline ArduinoJson::JsonArray &
 ArduinoJson::Internals::JsonParser<TReader, TWriter>::parseArray() {
+  if (_nestingLimit == 0) return JsonArray::invalid();
+  _nestingLimit--;
+
   // Create an empty array
   JsonArray &array = _buffer->createArray();
 
@@ -58,6 +61,7 @@ ArduinoJson::Internals::JsonParser<TReader, TWriter>::parseArray() {
 
 SUCCESS_EMPTY_ARRAY:
 SUCCES_NON_EMPTY_ARRAY:
+  _nestingLimit++;
   return array;
 
 ERROR_INVALID_VALUE:
@@ -70,12 +74,7 @@ ERROR_NO_MEMORY:
 template <typename TReader, typename TWriter>
 inline bool ArduinoJson::Internals::JsonParser<TReader, TWriter>::parseArrayTo(
     JsonVariant *destination) {
-  if (_nestingLimit == 0) return false;
-  _nestingLimit--;
-
   JsonArray &array = parseArray();
-
-  _nestingLimit++;
   if (!array.success()) return false;
 
   *destination = array;
@@ -85,6 +84,9 @@ inline bool ArduinoJson::Internals::JsonParser<TReader, TWriter>::parseArrayTo(
 template <typename TReader, typename TWriter>
 inline ArduinoJson::JsonObject &
 ArduinoJson::Internals::JsonParser<TReader, TWriter>::parseObject() {
+  if (_nestingLimit == 0) return JsonObject::invalid();
+  _nestingLimit--;
+
   // Create an empty object
   JsonObject &object = _buffer->createObject();
 
@@ -111,6 +113,7 @@ ArduinoJson::Internals::JsonParser<TReader, TWriter>::parseObject() {
 
 SUCCESS_EMPTY_OBJECT:
 SUCCESS_NON_EMPTY_OBJECT:
+  _nestingLimit++;
   return object;
 
 ERROR_INVALID_KEY:
@@ -125,12 +128,7 @@ ERROR_NO_MEMORY:
 template <typename TReader, typename TWriter>
 inline bool ArduinoJson::Internals::JsonParser<TReader, TWriter>::parseObjectTo(
     JsonVariant *destination) {
-  if (_nestingLimit == 0) return false;
-  _nestingLimit--;
-
   JsonObject &object = parseObject();
-
-  _nestingLimit++;
   if (!object.success()) return false;
 
   *destination = object;
