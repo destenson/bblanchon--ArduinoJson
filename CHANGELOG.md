@@ -4,7 +4,7 @@ ArduinoJson: change log
 HEAD
 ----
 
-* Fixed `JsonBuffer::parse()` not respecting nesting limit correctly (issue #693)
+* Fixed `JsonBuffer::parse()` not respecting nesting limit correctly (issue #693, with contribution from Zhenyu Wu)
 
 v5.13.1
 -------
